@@ -1,5 +1,6 @@
 local fun = require('fun')
 local yaml = require('yaml')
+local digest = require('digest')
 
 local utils = {}
 
@@ -142,5 +143,10 @@ function utils.upvalues(fn)
     return ret
 end
 
+function utils.generate_id(len, urlsafe)
+    len = len or 9
+    urlsafe = urlsafe or true
+    return digest.base64_encode(digest.urandom(len), {urlsafe = urlsafe})
+end
 
 return utils

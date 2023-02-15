@@ -4,11 +4,13 @@
 
 local checks = require('checks')
 local log = require('log')
+local utils = require('luatest.utils')
 
 local helpers = require('luatest.helpers')
 local Server = require('luatest.server')
 
 local ReplicaSet = {}
+local DEFAULT_RS_NAME = 'rs-'
 
 function ReplicaSet:inherit(object)
     setmetatable(object, self)
@@ -55,10 +57,20 @@ end
 
 -- Initialize the replica set object.
 function ReplicaSet:initialize()
+    -- :TODO:
+    if not self.name then
+        self.name = '/' .. DEFAULT_RS_NAME  .. utils.generate_id()
+    end
+    self.name = self.name .. '/' .. DEFAULT_RS_NAME  .. utils.generate_id()
+    -- if string.find(self.name, '/') ~= 1 then
+    --     error(
+    --         ('Wrong replica set "%s" name: use the following template "/<your_dir>"')
+    --         :format(self.name))
+    -- end
+
     self._server = Server
     if self.servers then
         local configs = table.deepcopy(self.servers)
-        self.servers = {}
         for _, config in ipairs(configs) do
             self:build_and_add_server(config)
         end
@@ -75,6 +87,10 @@ end
 function ReplicaSet:build_server(config)
     checks('table', self._server.constructor_checks)
     if config then config = table.deepcopy(config) end
+
+    if not config.vardir then
+        config.vardir = self._server.vardir .. self.name
+    end
     return self._server:new(config)
 end
 

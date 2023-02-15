@@ -33,6 +33,7 @@ local Server = {
     constructor_checks = {
         command = '?string',
         workdir = '?string',
+        vardir = '?string',
         datadir = '?string',
         chdir = '?string',
         env = '?table',

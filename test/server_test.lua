@@ -301,3 +301,11 @@ g.test_server_start_with_coverage_enabled = function()
         server:exec(function() return box.info.status end), 'running'
     )
 end
+
+g.test_server_custom_vardir = function()
+    local s = Server:new({
+        command = command,
+        vardir = Server.vardir .. '/my-custom'
+    })
+    t.assert_str_contains(s.workdir, '/tmp/t/my-custom/server-' .. s.id)
+end
